@@ -31,6 +31,7 @@
 (require 'org)
 (require 'org-element)
 (require 'citeproc)
+(require 'cl-lib)
 
 
 ;;; Customization

@@ -63,17 +63,6 @@ that the location should be ignored."
 (defvar-local org-cite-overlay-processor nil
   "Citation processor for the current buffer.")
 
-(defvar-local org-cite-overlay--previous-citation nil
-  "Last citation surrounding the cursor.
-
-If the cursor was not on a citation, nil.
-
-Generally, this variable is used to help track when the cursor
-leaves a citation.")
-
-(defvar-local org-cite-overlay--previous-point-location nil
-  "Value of `point' before the most recent command.")
-
 (defvar-local org-cite-overlay--timer nil
   "Current overlay timer.")
 

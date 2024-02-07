@@ -90,6 +90,13 @@ that the location should be ignored."
   "Prototype of org-cite-overlay.")
 (put 'org-cite-overlay-proto 'face 'org-cite)
 
+(defun org-cite-overlay--overlays-in (start end)
+  "Get citation overlays in START to END."
+  (when-let ((overlays (overlays-in start end)))
+    (cl-remove-if (lambda (overlay)
+                    (not (eq 'org-cite-overlay-proto (overlay-get overlay 'category))))
+                  overlays)))
+
 (defun org-cite-overlay--remove-overlay (start end)
   "Remove org-cite-overlays between START and END."
   (remove-overlays start end 'category 'org-cite-overlay-proto))
@@ -113,11 +120,7 @@ attached; these will be shown as appropriate."
 (defun org-cite-overlay--delete-citation-overlay-at-point ()
   "Delete the citation overlay at point."
   (interactive)
-  (when-let* ((overlays (overlays-in (1- (point)) (1+ (point))))
-              (citation-overlays (cl-remove-if (lambda (overlay)
-                                                 (not (eq 'org-cite-overlay-proto (overlay-get overlay 'category))))
-                                               overlays)))
-    (mapcar #'delete-overlay citation-overlays)))
+  (mapcar #'delete-overlay (org-cite-overlay--overlays-in (1- (point)) (1+ (point)))))
 
 ;;; Minor Mode
 

@@ -46,13 +46,13 @@ generate output, otherwise, generate output following
 
 Use a title of HEADER.  If using `universal-sidecar-citeproc',
 use STYLE if present."
-  (if (and (fboundp 'org-cite-overlay-mode)
-           (with-current-buffer buffer
-             (and org-cite-overlay-mode org-cite-overlay-processor)))
+  (if-let  ((processor (and (fboundp 'org-cite-overlay-mode)
+                            (with-current-buffer buffer
+                              (and org-cite-overlay-mode org-cite-overlay-processor)))))
       (with-current-buffer sidecar
         (universal-sidecar-insert-section org-cite-overlay-sidecar header
           (insert (universal-sidecar-fontify-as org-mode ((org-fold-core-style 'overlays))
-                    (car (citeproc-render-bib org-cite-overlay-processor 'org 'auto nil))
+                    (car (citeproc-render-bib processor 'org 'auto nil))
                     (save-match-data
                       (goto-char (point-min))
                       (while (re-search-forward org-target-regexp nil t)

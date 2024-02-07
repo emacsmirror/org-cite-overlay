@@ -121,8 +121,10 @@ attached; these will be shown as appropriate."
    :cites (org-element-map citation 'citation-reference
             (lambda (cite)
               (cl-remove-if #'null (list (cons 'id (org-element-property :key cite))
-                                         (cons 'prefix (car (org-element-property :prefix cite)))
-                                         (cons 'suffix (car (org-element-property :suffix cite))))
+                                         (cons 'prefix (and (org-element-property :prefix cite)
+                                                            (org-element-interpret-data (org-element-property :prefix cite))))
+                                         (cons 'suffix (and (org-element-property :suffix cite)
+                                                            (org-element-interpret-data (org-element-property :suffix cite)))))
                             :key #'cdr)))))
 
 (defun org-cite-overlay--fill-processor-and-create-overlays ()

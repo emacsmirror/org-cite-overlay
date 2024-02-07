@@ -95,7 +95,23 @@ leaves a citation.")
 ;; CSL style).
 
 
-;;; Overlay Management
+;;; Overlay Creation/Deletion
+
+(defvar org-cite-overlay-proto nil
+  "Prototype of org-cite-overlay.")
+(put 'org-cite-overlay-proto 'face 'org-cite)
+
+(defun org-cite-overlay--remove-overlay (start end)
+  "Remove org-cite-overlays between START and END."
+  (remove-overlays start end 'category 'org-cite-overlay-proto))
+
+(defun org-cite-overlay--create-overlay (start end overlay-content)
+  "Insert a citation overlay from START to END displaying OVERLAY-CONTENT."
+  (org-cite-overlay--remove-overlay start end)
+  (let ((overlay (make-overlay start end)))
+    (overlay-put overlay 'category 'org-cite-overlay-proto)
+    (overlay-put overlay 'display overlay-content)
+    overlay))
 
 
 ;;; Minor Mode

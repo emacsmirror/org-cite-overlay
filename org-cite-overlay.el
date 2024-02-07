@@ -73,6 +73,8 @@ that the location should be ignored."
 (defvar org-cite-overlay-proto nil
   "Prototype of org-cite-overlay.")
 (put 'org-cite-overlay-proto 'face 'org-cite)
+(put 'org-cite-overlay-proto 'evaporate t)
+(put 'org-cite-overlay-proto 'modification-hooks (list (lambda (o &rest _ignore) (delete-overlay o))))
 
 (defun org-cite-overlay--overlays-in (start end)
   "Get citation overlays in START to END."

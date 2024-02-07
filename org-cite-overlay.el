@@ -133,10 +133,28 @@ attached; these will be shown as appropriate."
 
 ;;; Cursor Motion Handling
 
+(defvar-local org-cite-overlay--last-overlay-bounds nil
+  "Bounds of the last overlay point was in.")
+
+(defvar-local org-cite-overlay--command-counter 0
+  "How many commands have been run before a forced overlay regen.")
+
 (defun org-cite-overlay--post-command-function ()
-  "This is executed by `post-command-hook', to manage overlay state."
-  ;; TODO: Implement some heuristics to prevent this from being constantly called
-  (org-cite-overlay--fill-processor-and-create-overlays))
+  "This is executed by `post-command-hook', to remove/add overlays."
+  (setq-local org-cite-overlay--command-counter (mod (1+ org-cite-overlay--command-counter) 30))
+  (let ((current-element (org-element-at-point)))
+    (cond
+     ((org-cite-overlay--overlays-in (1- (point)) (1+ (point)))
+      (let ((overlay (car (org-cite-overlay--overlays-in (1- (point)) (1+ (point))))))
+        (setq-local org-cite-overlay--last-overlay-bounds (cons (overlay-start overlay)
+                                                                (overlay-end overlay)))
+        (org-cite-overlay--remove-overlay-at-point)))
+     ((and org-cite-overlay--last-overlay-bounds
+           (not (<= (car org-cite-overlay--last-overlay-bounds) (point) (cdr org-cite-overlay--last-overlay-bounds))))
+      (setq-local org-cite-overlay--last-overlay-bounds nil)
+      (org-cite-overlay--fill-processor-and-create-overlays))
+     ((= 0 org-cite-overlay--command-counter)
+      (org-cite-overlay--fill-processor-and-create-overlays)))))
 
 
 ;;; Minor Mode

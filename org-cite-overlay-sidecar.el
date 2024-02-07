@@ -7,7 +7,7 @@
 ;; Homepage: https://git.sr.ht/~swflint/org-cite-overlay
 ;; Keywords: bib
 ;; Version: 0.0.1
-;; Package-Requires: ((emacs "28.1") (citeproc "0.9.4") (org-cite-overlay "0.0.1") (universal-sidecar "1.5.0") (universal-sidecar-citeproc "1.0.0"))
+;; Package-Requires: ((emacs "28.1") (citeproc "0.9.4") (org-cite-overlay "0.1.0") (universal-sidecar "1.5.0") (universal-sidecar-citeproc "1.0.0"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by

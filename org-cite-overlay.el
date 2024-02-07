@@ -150,6 +150,14 @@ attached; these will be shown as appropriate."
                 processor)))
 
 
+;;; Cursor Motion Handling
+
+(defun org-cite-overlay--post-cmd ()
+  "This is executed by `post-command-hook', and enables/disables overlays."
+  ;; TODO: Implement!
+  )
+
+
 ;;; Minor Mode
 
 (define-minor-mode org-cite-overlay-mode

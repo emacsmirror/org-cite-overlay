@@ -107,8 +107,6 @@ attached; these will be shown as appropriate."
     (overlay-put overlay 'display overlay-content)
     overlay))
 
-
-
 
 ;; Bibliograpy Management
 
@@ -136,7 +134,7 @@ attached; these will be shown as appropriate."
               (item-getter (citeproc-hash-itemgetter-from-any
                             (mapcar #'expand-file-name (org-cite-list-bibliography-files))))
               (citations (org-cite-overlay--get-citations))
-              (style (org-cite-csl--style-file nil))
+              (style (org-cite-csl--style-file nil)) ;TODO: get citation style from file.
               (processor (citeproc-create style item-getter locale-getter)))
     (org-cite-overlay--remove-all-overlays)
     (citeproc-append-citations (mapcar #'org-cite-overlay--citation-to-citeproc citations)

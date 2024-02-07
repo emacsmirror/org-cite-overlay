@@ -160,11 +160,14 @@ when the cursor leaves."
   :lighter " OCO"
   (if org-cite-overlay-mode
       (if (derived-mode-p 'org-mode)
-          (message "Enabled Case")
+          (progn
+            (org-cite-overlay--fill-processor-and-create-overlays)
+            (add-hook 'post-command-hook #'org-cite-overlay--post-cmd nil t))
         (display-warning 'org-cite-overlay
                          (substitute-quotes "`org-cite-overlay' may only be enabled in an `org-mode' buffer")
                          :error))
-    (message "Disabled Case")))
+    (org-cite-overlay--remove-all-overlays)
+    (remove-hook 'post-command-hook #'org-cite-overlay--post-cmd t)))
 
 (provide 'org-cite-overlay)
 

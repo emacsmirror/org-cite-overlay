@@ -179,7 +179,8 @@ when the cursor leaves."
             (add-hook 'post-command-hook #'org-cite-overlay--post-command-function nil t))
         (display-warning 'org-cite-overlay
                          (substitute-quotes "`org-cite-overlay' may only be enabled in an `org-mode' buffer")
-                         :error))
+                         :error)
+        (setq-local org-cite-overlay-mode nil))
     (org-cite-overlay--remove-all-overlays)
     (remove-hook 'post-command-hook #'org-cite-overlay--post-command-function t)))
 

@@ -69,8 +69,13 @@
 
 Previews are disabled when cursor is within them, and re-enabled
 when the cursor leaves."
+  :lighter " OCO"
   (if org-cite-overlay-mode
-      (message "Enabled Case")
+      (if (derived-mode-p 'org-mode)
+          (message "Enabled Case")
+        (display-warning 'org-cite-overlay
+                         (substitute-quotes "`org-cite-overlay' may only be enabled in an `org-mode' buffer")
+                         :error))
     (message "Disabled Case")))
 
 (provide 'org-cite-overlay)

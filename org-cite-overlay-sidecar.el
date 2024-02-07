@@ -3,7 +3,11 @@
 ;; Copyright (C) 2024  Samuel W. Flint
 
 ;; Author: Samuel W. Flint <me@samuelwflint.com>
+;; SPDX-License-Identifier: GPL-3.0-or-later
+;; Homepage: https://git.sr.ht/~swflint/org-cite-overlay
 ;; Keywords: bib
+;; Version: 0.0.1
+;; Package-Requires: ((emacs "27.1") (citeproc "0.9.4") (org-cite-overlay "0.0.1") (universal-sidecar "1.5.0") (universal-sidecar-citeproc "1.0.0"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by

@@ -106,7 +106,10 @@ leaves a citation.")
   (remove-overlays start end 'category 'org-cite-overlay-proto))
 
 (defun org-cite-overlay--create-overlay (start end overlay-content)
-  "Insert a citation overlay from START to END displaying OVERLAY-CONTENT."
+  "Insert OVERLAY-CONTENT as an overlay from START to END.
+
+Note: OVERLAY-CONTENT can be fontified/have text properties/faces
+attached; these will be shown as appropriate."
   (org-cite-overlay--remove-overlay start end)
   (let ((overlay (make-overlay start end)))
     (overlay-put overlay 'category 'org-cite-overlay-proto)

@@ -61,7 +61,7 @@ that the location should be ignored."
 ;;; State Management
 
 (defvar-local org-cite-overlay-processor nil
-  "Overlay processor for the current buffer.")
+  "Citation processor for the current buffer.")
 
 (defvar-local org-cite-overlay--previous-citation nil
   "Last citation surrounding the cursor.

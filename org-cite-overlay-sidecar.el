@@ -37,6 +37,29 @@
 (require 'ol)
 
 
+;;; Get a filled processor for a buffer.
+
+(defun org-cite-overlay-sidecar--get-processor (buffer &optional style)
+  "Get a (filled) citation processor for BUFFER.
+
+If a citation processor is not available from
+`org-cite-overlay-mode', use STYLE if not nil, otherwise use the
+default style from `universal-sidecar-citeproc-default-style'."
+  (with-current-buffer buffer
+    (if (and (fboundp 'org-cite-overlay-mode)
+             (bound-and-true-p org-cite-overlay-mode)
+             (bound-and-true-p org-cite-overlay-processor))
+        org-cite-overlay-processor
+      (when-let ((data-sources (mapcar #'expand-file-name (org-cite-list-bibliography-files)))
+                 (references (org-element-map   (org-element-parse-buffer)
+                                 'citation-reference
+                               (lambda (citation)
+                                 (org-element-property :key citation))))
+                 (processor (universal-sidecar-citeproc-get-processor data-sources :style style)))
+        (citeproc-add-uncited references processor)
+        processor))))
+
+
 ;;; Define the Sidecar
 
 (universal-sidecar-define-section org-cite-overlay-sidecar ((header "References") style)
@@ -49,34 +72,16 @@ generate output, otherwise, generate output following
 `universal-sidecar-citeproc' configuration.
 
 Use a title of HEADER.  If using `universal-sidecar-citeproc',
-use STYLE if present."
-  (if-let  ((processor (and (fboundp 'org-cite-overlay-mode)
-                            (with-current-buffer buffer
-                              (and org-cite-overlay-mode org-cite-overlay-processor)))))
-      (with-current-buffer sidecar
-        (universal-sidecar-insert-section org-cite-overlay-sidecar header
-          (insert (universal-sidecar-fontify-as org-mode ((org-fold-core-style 'overlays))
-                    (car (citeproc-render-bib processor 'org 'auto nil))
-                    (save-match-data
-                      (goto-char (point-min))
-                      (while (re-search-forward org-target-regexp nil t)
-                        (replace-match "")))))))
-    (when-let* ((data-sources (mapcar #'expand-file-name (org-cite-list-bibliography-files)))
-                (references (org-element-map (with-current-buffer buffer
-                                               (org-element-parse-buffer))
-                                'citation-reference
-                              (lambda (citation)
-                                (org-element-property :key citation))))
-                (processor (universal-sidecar-citeproc-get-processor data-sources :style style)))
-      (citeproc-add-uncited references processor)
-      (with-current-buffer sidecar
-        (universal-sidecar-insert-section org-cite-sidecar header
-          (insert (universal-sidecar-fontify-as org-mode ((org-fold-core-style 'overlays))
-                    (car (citeproc-render-bib processor 'org 'auto 'nil))
-                    (save-match-data
-                      (goto-char (point-min))
-                      (while (re-search-forward org-target-regexp nil t)
-                        (replace-match ""))))))))))
+use STYLE if provided."
+  (when-let  ((processor (org-cite-overlay-sidecar--get-processor buffer style)))
+    (with-current-buffer sidecar
+      (universal-sidecar-insert-section org-cite-overlay-sidecar header
+        (insert (universal-sidecar-fontify-as org-mode ((org-fold-core-style 'overlays))
+                  (car (citeproc-render-bib processor 'org 'auto nil))
+                  (save-match-data
+                    (goto-char (point-min))
+                    (while (re-search-forward org-target-regexp nil t)
+                      (replace-match "")))))))))
 
 (provide 'org-cite-overlay-sidecar)
 

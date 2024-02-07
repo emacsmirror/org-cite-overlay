@@ -1,0 +1,39 @@
+# SPDX-FileCopyrightText: 2024 Samuel W. Flint <me@samuelwflint.com>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+image: nixos/unstable
+packages:
+  - nixos.emacs
+  - nixos.hut
+  - nixos.python3
+  - nixos.reuse
+sources:
+  - https://github.com/riscy/melpazoid
+artifacts:
+  - package-archive.tar.gz
+tasks:
+  - setup-emacs: |
+      emacs --batch -l org-cite-overlay/build/init.el -f build/package-install-prereqs
+  - license-lint: |
+      cd org-cite-overlay
+      reuse lint || echo
+  - lint-all: |
+      emacs --batch -l org-cite-overlay/build/init.el -f package-lint-batch-and-exit org-cite-overlay/*.el || echo
+  - run-melpazoid: |
+      export LOCAL_REPO='~/org-cite-overlay/'
+      set +x
+      for recipe in ~/org-cite-overlay/build/recipes/* ; do
+          export RECIPE=$(cat ${recipe})
+          set -x
+          emacs --batch -l ~/org-cite-overlay/build/init.el -l melpazoid/melpazoid/melpazoid.el || echo
+          set +x
+      done
+  - byte-compile: |
+      emacs --batch -L org-cite-overlay/ -l org-cite-overlay/build/init.el -f batch-byte-compile org-cite-overlay/*.el
+  - build-packages: |
+      mkdir -p ~/package-archive/
+      emacs --batch -l ~/org-cite-overlay/build/init.el -f build/build-packages
+  - build-archive: |
+      cd ~/
+      tar czvf ~/package-archive.tar.gz package-archive/

@@ -7,7 +7,7 @@
 ;; Homepage: https://git.sr.ht/~swflint/org-cite-overlay
 ;; Keywords: bib, tex
 ;; Version: 0.0.1
-;; Package-Requires: ((emacs "29.1") (citeproc "0.9.4"))
+;; Package-Requires: ((emacs "28.1") (citeproc "0.9.4"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -171,7 +171,7 @@ when the cursor leaves."
             (org-cite-overlay--fill-processor-and-create-overlays)
             (add-hook 'post-command-hook #'org-cite-overlay--post-command-function nil t))
         (display-warning 'org-cite-overlay
-                         (substitute-quotes "`org-cite-overlay' may only be enabled in an `org-mode' buffer")
+                         "`org-cite-overlay' may only be enabled in an `org-mode' buffer"
                          :error)
         (setq-local org-cite-overlay-mode nil))
     (org-cite-overlay--remove-all-overlays)

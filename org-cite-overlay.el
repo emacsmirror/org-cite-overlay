@@ -138,7 +138,7 @@ attached; these will be shown as appropriate."
                        (end (- (org-element-property :end citation-object)
                                (org-element-property :post-blank citation-object))))
                    (unless (<= start (point) end)
-                     (org-cite-overlay--create-overlay start eend
+                     (org-cite-overlay--create-overlay start end
                                                        (with-temp-buffer
                                                          (insert text)
                                                          (org-mode)

@@ -94,6 +94,11 @@ that the location should be ignored."
   "Remove org-cite-overlays between START and END."
   (remove-overlays start end 'category 'org-cite-overlay-proto))
 
+(defun org-cite-overlay--remove-all-overlays ()
+  "Remove all org-cite-overlays in the buffer."
+  (interactive)
+  (remove-overlasy (point-min) (point-max) 'category 'org-cite-overlay-proto))
+
 (defun org-cite-overlay--create-overlay (start end overlay-content)
   "Insert OVERLAY-CONTENT as an overlay from START to END.
 
@@ -105,6 +110,14 @@ attached; these will be shown as appropriate."
     (overlay-put overlay 'display overlay-content)
     overlay))
 
+(defun org-cite-overlay--delete-citation-overlay-at-point ()
+  "Delete the citation overlay at point."
+  (interactive)
+  (when-let* ((overlays (overlays-in (1- (point)) (1+ (point))))
+              (citation-overlays (cl-remove-if (lambda (overlay)
+                                                 (not (eq 'org-cite-overlay-proto (overlay-get overlay 'category))))
+                                               overlays)))
+    (mapcar #'delete-overlay citation-overlays)))
 
 ;;; Minor Mode
 

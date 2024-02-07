@@ -34,31 +34,6 @@
 (require 'cl-lib)
 
 
-;;; Customization
-
-(defgroup org-cite-overlay nil
-  "Display org-cite citations as formatted overlays."
-  :group 'org-cite
-  :prefix "org-cite-overlay-"
-  :link '(url-link :tag "Sourcehut" "https://git.sr.ht/~swflint/org-cite-overlay")
-  :link '(emacs-library-link :tag "Library Source" "org-cite-overlay.el"))
-
-(defcustom org-cite-overlay-ignore-predicates (list 'org-at-table-p
-                                                    'org-at-table.el-p
-                                                    'org-at-block-p)
-  "List of predicates to determine whether to ignore a citation.
-
-These will be run until a non-nil value is returned, indicating
-that the location should be ignored."
-  :group 'org-cite-overlay
-  :type 'hook)
-
-(defcustom org-cite-overlay-delay 0.0
-  "Seconds of delay before previewing citation."
-  :group 'org-cite-overlay
-  :type 'number)
-
-
 ;;; State Management
 
 (defvar-local org-cite-overlay-processor nil

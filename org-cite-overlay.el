@@ -90,6 +90,10 @@ that the location should be ignored."
   (interactive)
   (remove-overlays (point-min) (point-max) 'category 'org-cite-overlay-proto))
 
+(defun org-cite-overlay--remove-overlay-at-point ()
+  "Delete the citation overlay at point."
+  (mapcar #'delete-overlay (org-cite-overlay--overlays-in (1- (point)) (1+ (point)))))
+
 (defun org-cite-overlay--create-overlay (start end overlay-content)
   "Insert OVERLAY-CONTENT as an overlay from START to END.
 
@@ -101,10 +105,7 @@ attached; these will be shown as appropriate."
     (overlay-put overlay 'display overlay-content)
     overlay))
 
-(defun org-cite-overlay--delete-citation-overlay-at-point ()
-  "Delete the citation overlay at point."
-  (interactive)
-  (mapcar #'delete-overlay (org-cite-overlay--overlays-in (1- (point)) (1+ (point)))))
+
 
 
 ;; Bibliograpy Management

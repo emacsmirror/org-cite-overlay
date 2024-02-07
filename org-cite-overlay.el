@@ -117,15 +117,19 @@ attached; these will be shown as appropriate."
   (org-element-map (org-element-parse-buffer) 'citation #'identity))
 
 (defun org-cite-overlay--citation-to-citeproc (citation)
-  (citeproc-citation-create
-   :cites (org-element-map citation 'citation-reference
-            (lambda (cite)
-              (cl-remove-if #'null (list (cons 'id (org-element-property :key cite))
-                                         (cons 'prefix (and (org-element-property :prefix cite)
-                                                            (org-element-interpret-data (org-element-property :prefix cite))))
-                                         (cons 'suffix (and (org-element-property :suffix cite)
-                                                            (org-element-interpret-data (org-element-property :suffix cite)))))
-                            :key #'cdr)))))
+  "Generate a citeproc citation object from CITATION."
+  (apply #'citeproc-citation-create
+         (append (list :cites
+                       (org-element-map citation 'citation-reference
+                         (lambda (cite)
+                           (cl-remove-if #'null
+                                         (list (cons 'id (org-element-property :key cite))
+                                               (cons 'prefix (and (org-element-property :prefix cite)
+                                                                  (org-element-interpret-data (org-element-property :prefix cite))))
+                                               (cons 'suffix (and (org-element-property :suffix cite)
+                                                                  (org-element-interpret-data (org-element-property :suffix cite)))))
+                                         :key #'cdr))))
+                 (org-cite-csl--create-structure-params citation nil))))
 
 (defun org-cite-overlay--fill-processor-and-create-overlays ()
   (when-let* ((locale-getter (org-cite-csl--locale-getter))

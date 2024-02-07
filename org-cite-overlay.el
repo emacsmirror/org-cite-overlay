@@ -67,23 +67,6 @@ that the location should be ignored."
   "Current overlay timer.")
 
 
-;; Bibliograpy Management
-
-;; From https://github.com/andras-simonyi/citeproc-el/issues/152#issuecomment-1881129883
-;; I've looked into the package and it seems very interesting -- I'm
-;; happy that you are making use of citeproc-el in it. As for adding a
-;; defcustom, citeproc-el doesn't have customizable variables by
-;; design, because it is intended to be a low-level library which is
-;; not user-facing at all. If you want to delegate setting the CSL
-;; locales (and styles) directory to another package I recommend using
-;; the variables `org-cite-csl-locales-dir' and `org-cite-csl-styles-dir'
-;; in oc-csl.el, which is part of Org and, therefore, Emacs. Relying
-;; on Org in this respect could have the added benefit that it already
-;; provides a locale-getter creating function, and Org actually
-;; contains the default en_US CSL locale (and the Chicago author-date
-;; CSL style).
-
-
 ;;; Overlay Creation/Deletion
 
 (defvar org-cite-overlay-proto nil
@@ -121,6 +104,49 @@ attached; these will be shown as appropriate."
   "Delete the citation overlay at point."
   (interactive)
   (mapcar #'delete-overlay (org-cite-overlay--overlays-in (1- (point)) (1+ (point)))))
+
+
+;; Bibliograpy Management
+
+(defun org-cite-overlay--get-citations ()
+  "Get citations for current buffer."
+  (org-element-map (org-element-parse-buffer) 'citation #'identity))
+
+(defun org-cite-overlay--citation-to-citeproc (citation)
+  (citeproc-citation-create
+   :cites (org-element-map citation 'citation-reference
+            (lambda (cite)
+              (cl-remove-if #'null (list (cons 'id (org-element-property :key cite))
+                                         (cons 'prefix (car (org-element-property :prefix cite)))
+                                         (cons 'suffix (car (org-element-property :suffix cite))))
+                            :key #'cdr)))))
+
+(defun org-cite-overlay--fill-processor-and-create-overlays ()
+  (when-let* ((locale-getter (org-cite-csl--locale-getter))
+              (item-getter (citeproc-hash-itemgetter-from-any
+                            (mapcar #'expand-file-name (org-cite-list-bibliography-files))))
+              (citations (org-cite-overlay--get-citations))
+              (style (org-cite-csl--style-file nil))
+              (processor (citeproc-create style item-getter locale-getter)))
+    (org-cite-overlay--remove-all-overlays)
+    (citeproc-append-citations (mapcar #'org-cite-overlay--citation-to-citeproc citations)
+                               processor)
+    (cl-mapcar (lambda (citation-object text)
+                 (let ((start (org-element-property :begin citation-object))
+                       (end (- (org-element-property :end citation-object)
+                               (org-element-property :post-blank citation-object))))
+                   (unless (<= start (point) end)
+                     (org-cite-overlay--create-overlay start eend
+                                                       (with-temp-buffer
+                                                         (insert text)
+                                                         (org-mode)
+                                                         (font-lock-ensure)
+                                                         (buffer-string))))))
+               citations
+               (citeproc-render-citations processor 'org 'no-links))
+    (setq-local org-cite-overlay-processor
+                processor)))
+
 
 ;;; Minor Mode
 

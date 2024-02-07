@@ -7,7 +7,7 @@
 ;; Homepage: https://git.sr.ht/~swflint/org-cite-overlay
 ;; Keywords: bib, tex
 ;; Version: 0.0.1
-;; Package-Requires: ((emacs "27.1") (citeproc "0.9.4"))
+;; Package-Requires: ((emacs "29.1") (citeproc "0.9.4"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
 
 (require 'org)
 (require 'org-element)
+(require 'oc-csl)
 (require 'citeproc)
 (require 'cl-lib)
 

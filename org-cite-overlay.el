@@ -156,10 +156,10 @@ attached; these will be shown as appropriate."
 
 ;;; Cursor Motion Handling
 
-(defun org-cite-overlay--post-cmd ()
-  "This is executed by `post-command-hook', and enables/disables overlays."
-  ;; TODO: Implement!
-  )
+(defun org-cite-overlay--post-command-function ()
+  "This is executed by `post-command-hook', to manage overlay state."
+  ;; TODO: Implement some heuristics to prevent this from being constantly called
+  (org-cite-overlay--fill-processor-and-create-overlays))
 
 
 ;;; Minor Mode
@@ -174,12 +174,12 @@ when the cursor leaves."
       (if (derived-mode-p 'org-mode)
           (progn
             (org-cite-overlay--fill-processor-and-create-overlays)
-            (add-hook 'post-command-hook #'org-cite-overlay--post-cmd nil t))
+            (add-hook 'post-command-hook #'org-cite-overlay--post-command-function nil t))
         (display-warning 'org-cite-overlay
                          (substitute-quotes "`org-cite-overlay' may only be enabled in an `org-mode' buffer")
                          :error))
     (org-cite-overlay--remove-all-overlays)
-    (remove-hook 'post-command-hook #'org-cite-overlay--post-cmd t)))
+    (remove-hook 'post-command-hook #'org-cite-overlay--post-command-function t)))
 
 (provide 'org-cite-overlay)
 

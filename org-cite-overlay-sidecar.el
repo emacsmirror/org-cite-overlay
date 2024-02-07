@@ -54,25 +54,25 @@ use STYLE if present."
           (insert (universal-sidecar-fontify-as org-mode ((org-fold-core-style 'overlays))
                     (car (citeproc-render-bib org-cite-overlay-processor 'org 'auto nil))
                     (save-match-data
-                    (goto-char (point-min))
-                    (while (re-search-forward org-target-regexp nil t)
-                      (replace-match "")))))))
+                      (goto-char (point-min))
+                      (while (re-search-forward org-target-regexp nil t)
+                        (replace-match "")))))))
     (when-let* ((data-sources (mapcar #'expand-file-name (org-cite-list-bibliography-files)))
-              (references (org-element-map (with-current-buffer buffer
-                                             (org-element-parse-buffer))
-                              'citation-reference
-                            (lambda (citation)
-                              (org-element-property :key citation))))
-              (processor (universal-sidecar-citeproc-get-processor data-sources :style style)))
-    (citeproc-add-uncited references processor)
-    (with-current-buffer sidecar
-      (universal-sidecar-insert-section org-cite-sidecar header
-        (insert (universal-sidecar-fontify-as org-mode ((org-fold-core-style 'overlays))
-                  (car (citeproc-render-bib processor 'org 'auto 'nil))
-                  (save-match-data
-                    (goto-char (point-min))
-                    (while (re-search-forward org-target-regexp nil t)
-                      (replace-match "")))))))))
+                (references (org-element-map (with-current-buffer buffer
+                                               (org-element-parse-buffer))
+                                'citation-reference
+                              (lambda (citation)
+                                (org-element-property :key citation))))
+                (processor (universal-sidecar-citeproc-get-processor data-sources :style style)))
+      (citeproc-add-uncited references processor)
+      (with-current-buffer sidecar
+        (universal-sidecar-insert-section org-cite-sidecar header
+          (insert (universal-sidecar-fontify-as org-mode ((org-fold-core-style 'overlays))
+                    (car (citeproc-render-bib processor 'org 'auto 'nil))
+                    (save-match-data
+                      (goto-char (point-min))
+                      (while (re-search-forward org-target-regexp nil t)
+                        (replace-match ""))))))))))
 
 (provide 'org-cite-overlay-sidecar)
 

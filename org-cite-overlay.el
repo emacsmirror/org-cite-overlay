@@ -106,6 +106,10 @@ attached; these will be shown as appropriate."
                  (org-cite-csl--create-structure-params citation nil))))
 
 (defun org-cite-overlay--fill-processor-and-create-overlays ()
+  "Create a processor and overlays for the current buffer.
+
+Note, the processor will be stored in
+`org-cite-overlay-processor' which is buffer-local."
   (when-let* ((locale-getter (org-cite-csl--locale-getter))
               (item-getter (citeproc-hash-itemgetter-from-any
                             (mapcar #'expand-file-name (org-cite-list-bibliography-files))))

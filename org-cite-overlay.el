@@ -88,7 +88,7 @@ that the location should be ignored."
 (defun org-cite-overlay--remove-all-overlays ()
   "Remove all org-cite-overlays in the buffer."
   (interactive)
-  (remove-overlasy (point-min) (point-max) 'category 'org-cite-overlay-proto))
+  (remove-overlays (point-min) (point-max) 'category 'org-cite-overlay-proto))
 
 (defun org-cite-overlay--create-overlay (start end overlay-content)
   "Insert OVERLAY-CONTENT as an overlay from START to END.

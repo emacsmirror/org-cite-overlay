@@ -57,6 +57,9 @@
 (require 'oc)
 (require 'ol)
 
+(eval-when-compile
+  (defvar org-cite-overlay-processor))
+
 
 ;;; Get a filled processor for a buffer.
 

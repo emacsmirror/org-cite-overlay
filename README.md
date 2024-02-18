@@ -1,6 +1,6 @@
 [![builds.sr.ht status](https://builds.sr.ht/~swflint/org-cite-overlay.svg)](https://builds.sr.ht/~swflint/org-cite-overlay?)
 
-# `org-cite-overlay` [![MELPA](https://melpa.org/packages/org-cite-overlay.svg)](https://melpa.org/#/org-cite-overlay)
+# `org-cite-overlay` [![MELPA](https://melpa.org/packages/org-cite-overlay-badge.svg)](https://melpa.org/#/org-cite-overlay)
 
 Automatically toggle showing org-cite citations as formatted overlays upon cursor entry/exit.
 To use, enable `org-cite-overlay-mode` in org mode buffers (for example, in `org-mode-hook`).
@@ -10,7 +10,7 @@ This package does have a few limitations:
  - Detection of exit or insertion of citations is somewhat inconsistent, so every 30 user commands in the buffer, all citations will be regenerated.
  - Only the default (chicago-author-year) style is used at the moment; this should eventually be fixed.
 
-# `org-cite-overlay-sidecar` [![MELPA](https://melpa.org/packages/org-cite-overlay-sidecar.svg)](https://melpa.org/#/org-cite-overlay-sidecar)
+# `org-cite-overlay-sidecar` [![MELPA](https://melpa.org/packages/org-cite-overlay-sidecar-badge.svg)](https://melpa.org/#/org-cite-overlay-sidecar)
 
 This is meant to replace [`org-cite-sidecar`](https://melpa.org/#/org-cite-sidecar), and will integrate with `org-cite-overlay`.
 Similar to the former, it will show formatted org-cite citations in the sidecar, however, if `org-cite-overlay` is in use, the processor it fills will be used (reducing the amount of computation performed).

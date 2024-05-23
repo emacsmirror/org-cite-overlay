@@ -8,7 +8,6 @@ This code is heavily inspired by [`org-fragtog`](https://github.com/io12/org-fra
 
 This package does have a few limitations:
  - Detection of exit or insertion of citations is somewhat inconsistent, so every 30 user commands in the buffer, all citations will be regenerated.
- - Only the default (chicago-author-year) style is used at the moment; this should eventually be fixed.
 
 # `org-cite-overlay-sidecar` [![MELPA](https://melpa.org/packages/org-cite-overlay-sidecar-badge.svg)](https://melpa.org/#/org-cite-overlay-sidecar)
 

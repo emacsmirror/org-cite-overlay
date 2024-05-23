@@ -6,7 +6,7 @@
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;; Homepage: https://git.sr.ht/~swflint/org-cite-overlay
 ;; Keywords: bib, tex
-;; Version: 0.5.0
+;; Version: 1.0.0
 ;; Package-Requires: ((emacs "28.1") (citeproc "0.9.4"))
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -34,8 +34,6 @@
 ;;  - Detection of exit or insertion of citations is somewhat
 ;;    inconsistent, so every 30 user commands in the buffer, all
 ;;    citations will be regenerated.
-;;  - Only the default (chicago-author-year) style is used at the
-;;    moment; this should eventually be fixed.
 
 ;;; Code:
 
@@ -53,6 +51,26 @@
 
 (defvar-local org-cite-overlay--timer nil
   "Current overlay timer.")
+
+
+;;; Detect CSL Style
+
+(defun org-cite-overlay--detect-csl-style ()
+  "Detect CSL style to use.
+
+This is detected by looking for a #+cite_export: line, and,
+assuming it specifies a CSL processor, parsing this for the
+specified CSL file."
+  (when-let ((keywords (org-element-map (org-element-parse-buffer)
+                           'keyword #'identity))
+             (cite-export-keyword (cl-find "CITE_EXPORT" keywords
+                                           :test #'string=
+                                           :key (apply-partially #'org-element-property :key)))
+             (cite-export-data (org-element-property :value cite-export-keyword))
+             (processor-details (split-string cite-export-data)))
+    (when (string= (nth 0 processor-details) "csl")
+      (list :cite-export
+            (list "csl" (nth 1 processor-details) (nth 2 processor-details))))))
 
 
 ;;; Overlay Creation/Deletion
@@ -125,7 +143,7 @@ Note, the processor will be stored in
               (item-getter (citeproc-hash-itemgetter-from-any
                             (mapcar #'expand-file-name (org-cite-list-bibliography-files))))
               (citations (org-cite-overlay--get-citations))
-              (style (org-cite-csl--style-file nil)) ;TODO: get citation style from file.
+              (style (org-cite-csl--style-file (org-cite-overlay--detect-csl-style))) ;TODO: get citation style from file.
               (processor (citeproc-create style item-getter locale-getter)))
     (org-cite-overlay--remove-all-overlays)
     (citeproc-append-citations (mapcar #'org-cite-overlay--citation-to-citeproc citations)

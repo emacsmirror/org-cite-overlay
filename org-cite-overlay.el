@@ -6,7 +6,7 @@
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;; Homepage: https://git.sr.ht/~swflint/org-cite-overlay
 ;; Keywords: bib, tex
-;; Version: 1.0.0
+;; Version: 1.1.0
 ;; Package-Requires: ((emacs "28.1") (citeproc "0.9.4"))
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -94,7 +94,6 @@ specified CSL file."
 
 (defun org-cite-overlay--remove-all-overlays ()
   "Remove all org-cite-overlays in the buffer."
-  (interactive)
   (remove-overlays (point-min) (point-max) 'category 'org-cite-overlay-proto))
 
 (defun org-cite-overlay--remove-overlay-at-point ()
@@ -190,6 +189,27 @@ Note, the processor will be stored in
     (org-cite-overlay--fill-processor-and-create-overlays))))
 
 
+;;; Mode-specific bindings
+
+(defun org-cite-overlay-reset-processor ()
+  "Reset `org-cite-overlay-processor' and force regeneration."
+  (interactive)
+  (org-cite-overlay--remove-all-overlays)
+  (setq-local org-cite-overlay-processor nil)
+  (org-cite-overlay--fill-processor-and-create-overlays))
+
+(defun org-cite-overlay-remove-overlays ()
+  "Force the removal of all org-cite overlays."
+  (interactive)
+  (org-cite-overlay--remove-all-overlays))
+
+(defvar-keymap org-cite-overlay-map
+  :doc "Mode-specific bindings for Org-Cite-Overlay."
+  "C-c C-x M-@" #'org-cite-overlay-reset-processor
+  "C-c C-x C-@" #'org-cite-overlay-remove-overlays)
+
+
+
 ;;; Minor Mode
 
 (define-minor-mode org-cite-overlay-mode
@@ -198,6 +218,7 @@ Note, the processor will be stored in
 Previews are disabled when cursor is within them, and re-enabled
 when the cursor leaves."
   :lighter " OCO"
+  :keymap org-cite-overlay-map
   (if org-cite-overlay-mode
       (if (derived-mode-p 'org-mode)
           (progn

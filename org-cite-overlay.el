@@ -34,6 +34,11 @@
 ;;  - Detection of exit or insertion of citations is somewhat
 ;;    inconsistent, so every 30 user commands in the buffer, all
 ;;    citations will be regenerated.
+;;
+;;;; Bug Reports and Patches
+;;
+;; If you find an error or have a patch to improve these packages,
+;; please send an email to `~swflint/emacs-utilities@lists.sr.ht'.
 
 ;;; Code:
 

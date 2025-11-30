@@ -153,7 +153,7 @@ Note, the processor will be stored in
               (item-getter (citeproc-hash-itemgetter-from-any
                             (mapcar #'expand-file-name (org-cite-list-bibliography-files))))
               (citations (org-cite-overlay--get-citations))
-              (style (org-cite-csl--style-file (org-cite-overlay--detect-csl-style))) ;TODO: get citation style from file.
+              (style (org-cite-csl--style-file (org-cite-overlay--detect-csl-style)))
               (processor (citeproc-create style item-getter locale-getter)))
     (org-cite-overlay--remove-all-overlays)
     (citeproc-append-citations (mapcar #'org-cite-overlay--citation-to-citeproc citations)

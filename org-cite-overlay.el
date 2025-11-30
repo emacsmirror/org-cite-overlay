@@ -6,7 +6,7 @@
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;; Homepage: https://git.sr.ht/~swflint/org-cite-overlay
 ;; Keywords: bib, tex
-;; Version: 1.1.0
+;; Version: 1.1.1
 ;; Package-Requires: ((emacs "28.1") (citeproc "0.9.4"))
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -80,11 +80,17 @@ specified CSL file."
 
 ;;; Overlay Creation/Deletion
 
+(defun org-cite-overlay--delete-overlay (ov &rest _ignore)
+  "Delete overlay OV.
+
+Intended for use as a function in an overlay's `modification-hooks' property."
+  (delete-overlay ov))
+
 (defvar org-cite-overlay-proto nil
   "Prototype of org-cite-overlay.")
 (put 'org-cite-overlay-proto 'face 'org-cite)
 (put 'org-cite-overlay-proto 'evaporate t)
-(put 'org-cite-overlay-proto 'modification-hooks (list (lambda (o &rest _ignore) (delete-overlay o))))
+(put 'org-cite-overlay-proto 'modification-hooks (list #'org-cite-overlay--delete-overlay))
 
 (defun org-cite-overlay--overlays-in (start end)
   "Get citation overlays in START to END."

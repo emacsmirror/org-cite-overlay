@@ -1,12 +1,12 @@
 ;;; org-cite-overlay.el --- Overlays for org-cite citations  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2024  Samuel W. Flint
+;; Copyright (C) 2024, 2026  Samuel W. Flint
 
 ;; Author: Samuel W. Flint <me@samuelwflint.com>
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;; Homepage: https://git.sr.ht/~swflint/org-cite-overlay
 ;; Keywords: bib, tex
-;; Version: 1.2.0
+;; Version: 1.3.0
 ;; Package-Requires: ((emacs "29.1") (citeproc "0.9.4"))
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -56,6 +56,58 @@
 
 (defvar-local org-cite-overlay--timer nil
   "Current overlay timer.")
+
+
+;;; Locator Parsing Data
+
+(defconst org-cite-overlay-locator-label-map
+  '(("p." . "page")
+    ("pp." . "page")
+    ("page" . "page")
+    ("pages" . "page")
+    ("col." . "column")
+    ("figure" . "figure")
+    ("fig." . "figure")
+    ("folio" . "folio")
+    ("number" . "number")
+    ("no." . "number")
+    ("line" . "line")
+    ("l." . "line")
+    ("note" . "note")
+    ("n." . "note")
+    ("opus" . "opus")
+    ("op." . "opus")
+    ("paragraph" . "paragraph")
+    ("para." . "paragraph")
+    ("part" . "part")
+    ("section" . "section")
+    ("sec." . "section")
+    ("sub verbo" . "sub verbo")
+    ("verse" . "verse")
+    ("vol." . "volume"))
+  "Map of locator short-forms to their citeproc names.")
+
+(defconst org-cite-overlay-locator-parse-regex
+  (rx-to-string `(and string-start (* space)
+                      (group-n 1 ,(cons 'or (mapcar #'car org-cite-overlay-locator-label-map)))
+                      (* space)
+                      (group-n 2 (+ any digit "-–—"))))
+  "Regular expression to parse structured locators in citations.")
+
+
+;;; Locator Parsing
+
+(defun org-cite-overlay--parse-locator (suffix)
+  "Extract structured locator from SUFFIX string.
+
+If a structured locator is present, a pair containing label and locator
+values (in order) will be returned, otherwise nil."
+  (save-match-data
+    (when (and suffix
+               (string-match org-cite-overlay-locator-parse-regex suffix))
+      (cons (cdr assoc (match-string 1 suffix)
+                 org-cite-overlay-locator-label-map)
+            (match-string 2 suffix)))))
 
 
 ;;; Detect CSL Style
@@ -135,13 +187,19 @@ attached; these will be shown as appropriate."
          (append (list :cites
                        (org-element-map citation 'citation-reference
                          (lambda (cite)
-                           (cl-remove-if #'null
-                                         (list (cons 'id (org-element-property :key cite))
-                                               (cons 'prefix (and (org-element-property :prefix cite)
-                                                                  (org-element-interpret-data (org-element-property :prefix cite))))
-                                               (cons 'suffix (and (org-element-property :suffix cite)
-                                                                  (org-element-interpret-data (org-element-property :suffix cite)))))
-                                         :key #'cdr))))
+                           (let* ((suffix (and (org-element-property :suffix cite)
+                                               (org-element-interpret-data (org-elmente-property :suffix cite))))
+                                  (parsed-suffix (org-cite-overlay--parse-locator suffix))
+                                  (clean-suffix (if parsed-suffix nil suffix)))
+                             (cl-remove-if #'null
+                                           (list (cons 'id (org-element-property :key cite))
+                                                 (cons 'prefix (and (org-element-property :prefix cite)
+                                                                    (org-element-interpret-data
+                                                                     (org-element-property :prefix cite))))
+                                                 (and clean-suffix (cons 'suffix clean-suffix))
+                                                 (and parsed (cons 'label (car parsed-suffix)))
+                                                 (and parsed (cons 'locator (cdr parsed-suffix))))
+                                           :key #'cdr)))))
                  (org-cite-csl--create-structure-params citation nil))))
 
 (defun org-cite-overlay--fill-processor-and-create-overlays ()

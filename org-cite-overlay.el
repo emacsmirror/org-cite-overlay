@@ -6,8 +6,8 @@
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;; Homepage: https://git.sr.ht/~swflint/org-cite-overlay
 ;; Keywords: bib, tex
-;; Version: 1.1.1
-;; Package-Requires: ((emacs "28.1") (citeproc "0.9.4"))
+;; Version: 1.2.0
+;; Package-Requires: ((emacs "29.1") (citeproc "0.9.4"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by

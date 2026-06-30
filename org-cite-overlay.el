@@ -6,7 +6,7 @@
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 ;; Homepage: https://git.sr.ht/~swflint/org-cite-overlay
 ;; Keywords: bib, tex
-;; Version: 1.3.0
+;; Version: 1.3.1
 ;; Package-Requires: ((emacs "29.1") (citeproc "0.9.4"))
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -197,8 +197,8 @@ attached; these will be shown as appropriate."
                                                                     (org-element-interpret-data
                                                                      (org-element-property :prefix cite))))
                                                  (and clean-suffix (cons 'suffix clean-suffix))
-                                                 (and parsed (cons 'label (car parsed-suffix)))
-                                                 (and parsed (cons 'locator (cdr parsed-suffix))))
+                                                 (and parsed-suffix (cons 'label (car parsed-suffix)))
+                                                 (and parsed-suffix (cons 'locator (cdr parsed-suffix))))
                                            :key #'cdr)))))
                  (org-cite-csl--create-structure-params citation nil))))
 
